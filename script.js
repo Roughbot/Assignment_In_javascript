@@ -1,29 +1,41 @@
 
 let entryId = 1
 
+
+
 function saveData() {
   const startDate = document.getElementById("start-date").value;
   const endDate = document.getElementById("end-date").value;
   const numberOfLeads = document.getElementById("number-of-leads").value;
   const excludedDates = document.getElementById("exclude-date");
-  const excludedDatesArray = excludedDates.value.split(',').map(date => date.trim());
+  const excludedDatesArray = parseExcludedDates(excludedDates.value);
 
-  // const excludedDates = document.querySelectorAll(".exclude-date");
+  $(document).ready(function() {
+    $("#exclude-date").datepicker({
+        dateFormat: 'yy-mm-dd', // Set the date format
+        onSelect: function(dateText) {
+            // This function will be triggered whenever a date is selected
+            const selectedDates = $(this).val().split(',').map(date => date.trim());
+            // Do something with the selectedDates array
+        }
+    });
+  });
+  
+  
 
   const id = entryId;
   
   entryId++;
-
-  // let excludedDatesArray = [];
-  // excludedDates.forEach(date => {
-  //   excludedDatesArray.push(date.textContent);
-  // });
+  //obtaining the month and year of the delivery
+  const monthYear = getMonthYear(startDate);
 
   // Calculate number of days between start and end date excluding excluded dates
   const days = getNumberOfDays(startDate, endDate, excludedDatesArray);
-
+  
   // Calculate expected lead count
   const expectedLeadCount = numberOfLeads / days;
+  
+  const ExcludedDates = excludedDatesArray.join(',');
 
   let currentDate = new Date();
   let year = currentDate.getFullYear();
@@ -52,6 +64,8 @@ function saveData() {
   cell2.textContent = id;
   cell3.textContent = startDate;
   cell4.textContent = endDate;
+  cell5.textContent = monthYear;
+  cell6.textContent = ExcludedDates;
   cell7.textContent = days;
   cell8.textContent = numberOfLeads;
   cell9.textContent = ~~expectedLeadCount;
@@ -60,7 +74,20 @@ function saveData() {
 }
 
 
-
+function parseExcludedDates(excludedDatesString) {
+  const excludedDatesArray = [];
+  const dateRanges = excludedDatesString.split(',');
+  dateRanges.forEach(range => {
+    const [start, end] = range.split(':');
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    for (let currentDate = startDate; currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
+      const dateString = currentDate.toISOString().split('T')[0];
+      excludedDatesArray.push(dateString);
+    }
+  });
+  return excludedDatesArray;
+}
 
 
 function getNumberOfDays(startDate, endDate, excludedDates) {
@@ -69,6 +96,7 @@ function getNumberOfDays(startDate, endDate, excludedDates) {
   let count = 0;
   for (let currentDate = start; currentDate <= end; currentDate.setDate(currentDate.getDate() + 1)) {
     const dateString = currentDate.toISOString().split('T')[0];
+    
     if (!excludedDates.includes(dateString)) {
       count++;
     }
@@ -76,3 +104,11 @@ function getNumberOfDays(startDate, endDate, excludedDates) {
   return count;
 }
 
+
+
+function getMonthYear(dateString) {
+  const date = new Date(dateString);
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  return `${month}, ${year}`;
+}
