@@ -25,3 +25,7 @@ app.get('/dataProcessingModule.js', function(req,res){
 app.get('/datepickerModule.js', function(req,res){
     res.sendFile(__dirname + "/" + "datepickerModule.js")
 });
+
+app.get('/ajaxModule.js', function(req,res){
+    res.sendFile(__dirname + "/" + "ajaxModule.js")
+});
