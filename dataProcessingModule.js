@@ -1,3 +1,5 @@
+import * as AjaxModule from './ajaxModule.js';
+
 let entryId = 1;
 
 export function saveData(selectedDates) {
@@ -49,6 +51,33 @@ export function saveData(selectedDates) {
     cell8.textContent = numberOfLeads;
     cell9.textContent = ~~expectedLeadCount;
     cell10.textContent = formattedDateTime;
+
+
+    //constructing the data into json format
+    const formData = {
+        id: entryId,
+        startDate: startDate,
+        endDate: endDate,
+        monthYear: monthYear,
+        excludedDates: ExcludedDates,
+        numberOfDays: days,
+        numberOfLeads: numberOfLeads,
+        expectedLeadCount: ~~expectedLeadCount,
+        formattedDateTime: formattedDateTime
+    };
+
+    // Send formData to the server using the AJAX module
+    AjaxModule.sendDataToServer(formData)
+        .then(response => {
+            // Handle success response from the server
+            console.log("Data saved successfully:", response);
+            // You can update the UI or show a success message to the user
+        })
+        .catch(error => {
+            // Handle error response from the server
+            console.error("Error occurred while saving data:", error);
+            // You can show an error message to the user
+        });
 
     
 }
