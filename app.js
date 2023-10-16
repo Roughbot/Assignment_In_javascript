@@ -17,3 +17,11 @@ app.get('/styles.css', function(req,res){
 app.get('/script.js', function(req,res){
     res.sendFile(__dirname + "/" + "script.js")
 });
+
+app.get('/dataProcessingModule.js', function(req,res){
+    res.sendFile(__dirname + "/" + "dataProcessingModule.js")
+});
+
+app.get('/datepickerModule.js', function(req,res){
+    res.sendFile(__dirname + "/" + "datepickerModule.js")
+});
